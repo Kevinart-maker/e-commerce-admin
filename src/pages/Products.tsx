@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useProduct } from '../context/Product';
 import Search from '../components/Search';
 import ProductList from '../components/ProductList';

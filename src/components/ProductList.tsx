@@ -4,9 +4,6 @@ import Review from "./Review";
 import React from "react";
 import { Link } from "react-router-dom";
 import { HiOutlinePencil } from "react-icons/hi2";
-import { TbCurrencyNaira } from "react-icons/tb";
-import { IoMdArrowDropdown } from "react-icons/io";
-import StarRatings from 'react-star-ratings';
 import { useState } from "react";
 
 interface Review {

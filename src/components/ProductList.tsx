@@ -4,7 +4,6 @@ import Review from "./Review";
 import React from "react";
 import { Link } from "react-router-dom";
 import { HiOutlinePencil } from "react-icons/hi2";
-import { useState } from "react";
 
 interface Review {
   user: string;
@@ -25,8 +24,6 @@ interface Product {
 }
 
 const ProductList = React.memo(({ product }: { product: Product }) => {
-    const [show, setShow] = useState(false);
-
     const { deleteProduct } = useProduct();
 
     const handleDelete = () => {

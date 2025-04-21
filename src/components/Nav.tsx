@@ -12,7 +12,7 @@ export default function Nav() {
 
   return (
     <nav className="z-50 bg-zinc-950 md:h-[100vh] md:w-[15rem] px-6 py-[2rem] text-white flex flex-col gap-8">
-        <div className='text-2xl font-bold w-full'>Nivek Techs</div>
+        <div className='text-2xl font-bold w-full custom-font'>Nivek Techs</div>
 
         {
           user && (

@@ -21,7 +21,7 @@ export default function Dashboard() {
           <ProductList product={product} />
         ))
       }
-      { resultsToDisplay.length === 0 && !loading && (<div className='text-center text-gray-500'>No Products Found</div>) }
+      { resultsToDisplay.length === 0 && !loading && (<div className='text-center text-gray-500'>No Product Found</div>) }
       
       { error && (<span className='px-[1rem] py-[0.3rem] text-xs text-red-500 bg-red-100 border border-red-500 w-fit rounded'>{error}</span>) }
 

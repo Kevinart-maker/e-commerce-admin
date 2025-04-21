@@ -24,7 +24,7 @@ const Search: React.FC<SearchProps> = ({ onSearch, placeholder = "Search..." }) 
   };
 
   return (
-    <div className="flex gap-2 items-center text-xs border-[1px] border-gray-400  p-1 rounded w-full">
+    <div className="flex gap-2 items-center text-xs border-[1px] border-gray-400  p-2 rounded w-full">
       <CiSearch className='text-xl'/>
       <input
         type="search"

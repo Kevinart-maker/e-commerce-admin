@@ -43,11 +43,19 @@ export default function CreateProduct() {
   };
 
   return (
-    <div className="p-4 flex flex-col gap-[3rem]">
-      <h1 className="font-bold text-xl text-[#1b1b1bf3]"><Link to='/' className="underline text-3xl">Products</Link> /  Create</h1>
+    <div className="p-4 flex flex-col gap-[3rem] md:mt-[3rem]">
+      <h1 className="font-medium text-xl text-zinc-950"><Link to='/products' className="hover:underline text-2xl">Products</Link> /  Create</h1>
       <ProductForm loading={loading} onSubmit={handleCreate} />
-      {error && <p className="text-red-500">{error}</p>}
-      {msg && <p className="text-green-500">{msg}</p>}
+      {error && (
+        <p className="px-[1rem] py-[0.3rem] text-xs text-red-500 bg-red-100 border border-red-500 w-fit rounded">
+          {error}
+        </p>
+      )}
+      {msg && (
+        <p className="px-[1rem] py-[0.3rem] text-xs text-green-500 bg-green-100 border border-green-500 w-fit rounded">
+          {msg}
+        </p>
+      )}
     </div>
   );
 }

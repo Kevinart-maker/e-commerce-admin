@@ -5,6 +5,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { useAuth } from './context/Auth';
 import Nav from './components/Nav';
 import Products from './pages/Products';
+import CreateProduct from './pages/Create';
+import UpdateProduct from './pages/Update';
 
 function App() {
   const { user } = useAuth();
@@ -29,6 +31,22 @@ function App() {
             element={
                 <PrivateRoute>
                   <Products />
+                </PrivateRoute>
+            }
+          />
+          <Route
+            path="/create"
+            element={
+                <PrivateRoute>
+                  <CreateProduct />
+                </PrivateRoute>
+            }
+          />
+          <Route
+            path="/update/:id"
+            element={
+                <PrivateRoute>
+                  <UpdateProduct />
                 </PrivateRoute>
             }
           />

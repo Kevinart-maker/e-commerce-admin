@@ -1,5 +1,4 @@
 import { useAuth } from "@/context/Auth";
-import { MdCancel } from "react-icons/md";
 import { useState } from "react";
 import ProfileForm from "./ProfileForm";
 import { HiOutlinePencil } from "react-icons/hi2";

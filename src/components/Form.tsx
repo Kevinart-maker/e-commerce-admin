@@ -6,6 +6,7 @@ import { MdCategory } from "react-icons/md";
 import { MdBrandingWatermark } from "react-icons/md";
 import { RiNumbersFill } from "react-icons/ri";
 import { FaFileImage } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 export interface Review {
   user: string;
@@ -132,12 +133,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ loading, initialValues, onSub
 
 
       <div className="w-fit self-baseline-last flex gap-4 mt-[2rem]">
-        <button type="submit" className="bg-gray-200 text-zinc-950 text-sm px-[1.5rem] py-[0.4rem] hover:text-zinc-950 w-fit self-center rounded hover:scale-110">
+        <Link to='/products' className="bg-gray-200 text-zinc-950 text-sm px-[1.5rem] py-[0.4rem] hover:text-zinc-950 w-fit self-center rounded hover:scale-110">
           Cancel
-        </button>
+        </Link>
 
         <button type="submit" className="bg-zinc-950 text-white text-sm px-[1.5rem] py-[0.4rem] w-fit self-center rounded hover:scale-110">
-          {loading ? 'creating..' : 'Submit'}
+          {loading ? 'submitting..' : 'Submit'}
         </button>
       </div>
     </form>

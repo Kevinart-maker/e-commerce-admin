@@ -9,6 +9,7 @@ import CreateProduct from './pages/Create';
 import UpdateProduct from './pages/Update';
 import Users from './pages/Users';
 import CreateUser from './pages/CreateUser';
+import Profile from './components/Profile';
 
 function App() {
   const { user } = useAuth();
@@ -18,6 +19,9 @@ function App() {
       <Nav />
 
       <div className='h-[100vh] w-[100%] overflow-y-scroll'>
+        <PrivateRoute>
+          <Profile />
+        </PrivateRoute>
         <Routes>
           <Route path="/login" element={!user ? <Login /> : <Navigate to='/' />} />
           <Route

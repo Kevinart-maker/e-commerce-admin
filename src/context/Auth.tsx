@@ -1,8 +1,8 @@
-import { createContext, useReducer, useEffect, ReactNode, useContext } from 'react';
+import { createContext, useReducer, useEffect, ReactNode, useContext, useState } from 'react';
 
 // Define the shape of the authentication state
 interface AuthState {
-  user: { email: string; role: string } | null;
+  user: { email: string; role: string, image: string, name: string } | null;
   token: string | null;
   fetchedUsers: any[]; // State for fetched users
   searchedUsers: any[]; // State for searched users
@@ -10,9 +10,9 @@ interface AuthState {
 
 // Define the actions for the reducer
 type AuthAction =
-  | { type: 'LOGIN'; payload: { user: { email: string; role: string }; token: string } }
+  | { type: 'LOGIN'; payload: { user: { email: string; role: string, image: string, name: string }; token: string } }
   | { type: 'LOGOUT' }
-  | { type: 'LOAD_FROM_STORAGE'; payload: { user: { email: string; role: string } | null; token: string | null } }
+  | { type: 'LOAD_FROM_STORAGE'; payload: { user: { email: string; role: string, image: string, name: string } | null; token: string | null } }
   | { type: 'SET_FETCHED_USERS'; payload: any[] }
   | { type: 'SET_SEARCHED_USERS'; payload: any[] };
 
@@ -64,10 +64,12 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 
 // Define the context type
 interface AuthContextType {
-  user: { email: string, role: string } | null;
+  user: { email: string, role: string, name: string, image: string } | null;
   token: string | null;
   fetchedUsers: any[];
   searchedUsers: any[];
+  visible: boolean;
+  toggleVisible: () => void;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string, role: string) => Promise<void>;
   logout: () => void;
@@ -83,6 +85,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const [visible, setVisible] = useState<boolean>(false); // State for visibility
 
   // Load user and token from local storage on app initialization
   useEffect(() => {
@@ -100,6 +103,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const toggleVisible = () => {
+    setVisible((prev) => !prev); // Toggle the visibility state
+  };
+
   const login = async (email: string, password: string) => {
     const response = await fetch('https://etemplate-backend.vercel.app/api/user/login', {
       method: 'POST',
@@ -112,7 +119,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const data = await response.json();
-    const userData = { email, role: data.role }; // Assuming the response contains user role
+
+    const userData = { email, role: data.role, image: data.image, name: data.name }; // Assuming the response contains user role
 
     // Dispatch login action
     dispatch({
@@ -140,7 +148,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const data = await response.json();
-    const userData = { email, role: data.role }; // Assuming the response contains user role
+    const userData = { email, role: data.role, image: data.image, name: data.name }; // Assuming the response contains user role
 
     // Dispatch login action after signup
     dispatch({
@@ -255,6 +263,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         token: state.token,
         fetchedUsers: state.fetchedUsers,
         searchedUsers: state.searchedUsers,
+        visible,
+        toggleVisible,
         login,
         signup,
         logout,

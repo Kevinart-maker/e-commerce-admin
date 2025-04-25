@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useProduct } from '../context/Product';
 import Search from '../components/Search';
-import ProductList from '../components/ProductList';
 import axios from 'axios';
 import { HiUsers } from 'react-icons/hi2';
 import { IoMdTrendingUp } from "react-icons/io";
+import Product from '@/components/Product';
 
 
 export default function Dashboard() {
-  const { products, searchResults, fetchProducts, loading, error, handleSearch } = useProduct();
+  const { fetchProducts, handleSearch } = useProduct();
   const [stats, setStats] = useState<any>([]);
 
   useEffect(()=>{
@@ -23,8 +23,6 @@ export default function Dashboard() {
     fetchStats();
     fetchProducts();
   }, [])
-
-  const resultsToDisplay = searchResults.length > 0 ? searchResults : products;
     
   return (
     <div className='p-[1rem] flex flex-col gap-8 md:mt-[3rem]'>
@@ -54,15 +52,8 @@ export default function Dashboard() {
     }
       
       <Search onSearch={handleSearch} placeholder="Search for Products" />
-      { loading ? (<div>loading..</div>) : 
-        resultsToDisplay.map((product) => (
-          <ProductList product={product} />
-        ))
-      }
-      { resultsToDisplay.length === 0 && !loading && (<div className='text-center text-gray-500'>No Product Found</div>) }
       
-      { error && (<span className='px-[1rem] py-[0.3rem] text-xs text-red-500 bg-red-100 border border-red-500 w-fit rounded'>{error}</span>) }
-
+      <Product />
     </div>
   )
 }

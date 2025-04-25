@@ -12,3 +12,11 @@
     font-family: "Poppins", sans-serif;
     transition: all 0.3s ease;
 }
+
+.blurry{
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 1000;
+}

@@ -2,20 +2,26 @@ import { createContext, useReducer, useEffect, ReactNode, useContext } from 'rea
 
 // Define the shape of the authentication state
 interface AuthState {
-  user: { email: string } | null;
+  user: { email: string; role: string } | null;
   token: string | null;
+  fetchedUsers: any[]; // State for fetched users
+  searchedUsers: any[]; // State for searched users
 }
 
 // Define the actions for the reducer
 type AuthAction =
-  | { type: 'LOGIN'; payload: { user: { email: string }; token: string } }
+  | { type: 'LOGIN'; payload: { user: { email: string; role: string }; token: string } }
   | { type: 'LOGOUT' }
-  | { type: 'LOAD_FROM_STORAGE'; payload: { user: { email: string } | null; token: string | null } };
+  | { type: 'LOAD_FROM_STORAGE'; payload: { user: { email: string; role: string } | null; token: string | null } }
+  | { type: 'SET_FETCHED_USERS'; payload: any[] }
+  | { type: 'SET_SEARCHED_USERS'; payload: any[] };
 
 // Initial state
 const initialState: AuthState = {
   user: null,
   token: null,
+  fetchedUsers: [],
+  searchedUsers: [],
 };
 
 // Reducer function
@@ -23,18 +29,33 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'LOGIN':
       return {
+        ...state,
         user: action.payload.user,
         token: action.payload.token,
       };
     case 'LOGOUT':
       return {
+        ...state,
         user: null,
         token: null,
+        fetchedUsers: [],
+        searchedUsers: [],
       };
     case 'LOAD_FROM_STORAGE':
       return {
+        ...state,
         user: action.payload.user,
         token: action.payload.token,
+      };
+    case 'SET_FETCHED_USERS':
+      return {
+        ...state,
+        fetchedUsers: action.payload,
+      };
+    case 'SET_SEARCHED_USERS':
+      return {
+        ...state,
+        searchedUsers: action.payload,
       };
     default:
       return state;
@@ -43,11 +64,19 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 
 // Define the context type
 interface AuthContextType {
-  user: { email: string } | null;
+  user: { email: string, role: string } | null;
   token: string | null;
+  fetchedUsers: any[];
+  searchedUsers: any[];
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string, role: string) => Promise<void>;
   logout: () => void;
+  getAllUsers: () => Promise<void>;
+  searchUsers: (query: string) => Promise<void>;
+  deleteUser: (id: string) => Promise<void>;
+  resetPasswordRequest: (email: string) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
+  updateUserProfile: (formData: FormData) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,7 +100,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-
   const login = async (email: string, password: string) => {
     const response = await fetch('https://etemplate-backend.vercel.app/api/user/login', {
       method: 'POST',
@@ -84,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const data = await response.json();
-    const userData = { email };
+    const userData = { email, role: data.role }; // Assuming the response contains user role
 
     // Dispatch login action
     dispatch({
@@ -112,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const data = await response.json();
-    const userData = { email };
+    const userData = { email, role: data.role }; // Assuming the response contains user role
 
     // Dispatch login action after signup
     dispatch({
@@ -137,14 +165,105 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('token');
   };
 
+  const getAllUsers = async () => {
+    const response = await fetch('https://etemplate-backend.vercel.app/api/user', {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
+    }
+
+    const users = await response.json();
+    dispatch({ type: 'SET_FETCHED_USERS', payload: users });
+  };
+
+  const searchUsers = async (query: string) => {
+    const response = await fetch(`https://etemplate-backend.vercel.app/api/user/search?query=${query}`, {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to search users');
+    }
+
+    const users = await response.json();
+    dispatch({ type: 'SET_SEARCHED_USERS', payload: users });
+  };
+
+  const deleteUser = async (id: string) => {
+    const response = await fetch(`https://etemplate-backend.vercel.app/api/user/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete user');
+    }
+  };
+
+  const resetPasswordRequest = async (email: string) => {
+    const response = await fetch('https://etemplate-backend.vercel.app/api/user/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to request password reset');
+    }
+  };
+
+  const resetPassword = async (token: string, newPassword: string) => {
+    const response = await fetch('https://etemplate-backend.vercel.app/api/user/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to reset password');
+    }
+  };
+
+  const updateUserProfile = async (formData: FormData) => {
+    const response = await fetch('https://etemplate-backend.vercel.app/api/user/profile', {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update profile');
+    }
+
+    return response.json();
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user: state.user,
         token: state.token,
+        fetchedUsers: state.fetchedUsers,
+        searchedUsers: state.searchedUsers,
         login,
         signup,
         logout,
+        getAllUsers,
+        searchUsers,
+        deleteUser,
+        resetPasswordRequest,
+        resetPassword,
+        updateUserProfile,
       }}
     >
       {children}

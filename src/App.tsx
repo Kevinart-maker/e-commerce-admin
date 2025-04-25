@@ -7,6 +7,8 @@ import Nav from './components/Nav';
 import Products from './pages/Products';
 import CreateProduct from './pages/Create';
 import UpdateProduct from './pages/Update';
+import Users from './pages/Users';
+import CreateUser from './pages/CreateUser';
 
 function App() {
   const { user } = useAuth();
@@ -39,6 +41,22 @@ function App() {
             element={
                 <PrivateRoute>
                   <CreateProduct />
+                </PrivateRoute>
+            }
+          />
+          <Route
+            path="/createuser"
+            element={
+                <PrivateRoute>
+                  <CreateUser />
+                </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+                <PrivateRoute>
+                  <Users />
                 </PrivateRoute>
             }
           />

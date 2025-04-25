@@ -3,33 +3,34 @@ import { CiSearch } from "react-icons/ci";
 import debounce from 'lodash.debounce';
 
 interface SearchProps {
-  onSearch: (query: string) => void; // Callback to handle search
-  placeholder?: string; // Optional placeholder for the input
+  onSearch: (query: string) => void;
+  placeholder?: string;
 }
 
 const Search: React.FC<SearchProps> = ({ onSearch, placeholder = "Search..." }) => {
   const [query, setQuery] = useState("");
 
+  // Use debounce inside useCallback to avoid recreating the function on every render
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      onSearch(value.trim());
+    }, 300),
+    [onSearch]
+  );
 
-  const debouncedFetch = useCallback(debounce(onSearch, 300), [])
-  
-  const handleSearch = (e: any) => {
-    e.preventDefault();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setQuery(value);
-    debouncedFetch(value);
-    if (query.trim()) {
-      onSearch(query.trim());
-    }
+    debouncedSearch(value);
   };
 
   return (
-    <div className="flex gap-2 items-center text-xs border-[1px] border-gray-400  p-2 rounded w-full">
+    <div className="flex gap-2 items-center text-xs border-[1px] border-gray-400 p-2 rounded w-full">
       <CiSearch className='text-xl'/>
       <input
         type="search"
         value={query}
-        onChange={handleSearch}
+        onChange={handleChange}
         placeholder={placeholder}
         className="outline-none w-full"
       />
